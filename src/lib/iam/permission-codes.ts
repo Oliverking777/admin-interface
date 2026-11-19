@@ -1,0 +1,252 @@
+/**
+ * Permission codes, mirroring the backend's PermissionCatalog (tsgp.yah_enterprise.config).
+ * Use these constants instead of typing code strings, so a typo is a compile error:
+ *
+ *   hasPermission(PERMISSIONS.ROLE_CREATE)
+ *
+ * Keep in sync with PermissionCatalog.java. Never rename a code that is already in use.
+ */
+
+export const PERMISSIONS = {
+  // 01 IAM
+  PERMISSION_CREATE: "PERMISSION_CREATE",
+  PERMISSION_READ: "PERMISSION_READ",
+  PERMISSION_UPDATE: "PERMISSION_UPDATE",
+  PERMISSION_DELETE: "PERMISSION_DELETE",
+  ROLE_CREATE: "ROLE_CREATE",
+  ROLE_READ: "ROLE_READ",
+  ROLE_UPDATE: "ROLE_UPDATE",
+  ROLE_DELETE: "ROLE_DELETE",
+  ROLE_PERMISSION_READ: "ROLE_PERMISSION_READ",
+  ROLE_PERMISSION_UPDATE: "ROLE_PERMISSION_UPDATE",
+  USER_CREATE: "USER_CREATE",
+  USER_READ: "USER_READ",
+  USER_UPDATE: "USER_UPDATE",
+  USER_DELETE: "USER_DELETE",
+  USER_ACTIVATE: "USER_ACTIVATE",
+  USER_DEACTIVATE: "USER_DEACTIVATE",
+  USER_ASSIGN_ROLE: "USER_ASSIGN_ROLE",
+  USER_PASSWORD_RESET: "USER_PASSWORD_RESET",
+
+  // 02 Location
+  LOCATION_CREATE: "LOCATION_CREATE",
+  LOCATION_READ: "LOCATION_READ",
+  LOCATION_UPDATE: "LOCATION_UPDATE",
+  LOCATION_ACTIVATE: "LOCATION_ACTIVATE",
+  LOCATION_DEACTIVATE: "LOCATION_DEACTIVATE",
+  LOCATION_USER_READ: "LOCATION_USER_READ",
+  LOCATION_USER_ASSIGN: "LOCATION_USER_ASSIGN",
+  LOCATION_USER_REMOVE: "LOCATION_USER_REMOVE",
+
+  // 03 Category
+  CATEGORY_CREATE: "CATEGORY_CREATE",
+  CATEGORY_READ: "CATEGORY_READ",
+  CATEGORY_UPDATE: "CATEGORY_UPDATE",
+  CATEGORY_ACTIVATE: "CATEGORY_ACTIVATE",
+  CATEGORY_DEACTIVATE: "CATEGORY_DEACTIVATE",
+
+  // 04 Product
+  PRODUCT_CREATE: "PRODUCT_CREATE",
+  PRODUCT_READ: "PRODUCT_READ",
+  PRODUCT_UPDATE: "PRODUCT_UPDATE",
+  PRODUCT_ACTIVATE: "PRODUCT_ACTIVATE",
+  PRODUCT_DEACTIVATE: "PRODUCT_DEACTIVATE",
+
+  // 05 Unit & Conversion
+  UNIT_CREATE: "UNIT_CREATE",
+  UNIT_READ: "UNIT_READ",
+  UNIT_UPDATE: "UNIT_UPDATE",
+  UNIT_DEACTIVATE: "UNIT_DEACTIVATE",
+
+  // 06 Pricing
+  PRICE_RULE_CREATE: "PRICE_RULE_CREATE",
+  PRICE_RULE_READ: "PRICE_RULE_READ",
+  PRICE_RULE_UPDATE: "PRICE_RULE_UPDATE",
+  PRICE_RULE_DEACTIVATE: "PRICE_RULE_DEACTIVATE",
+
+  // 07 Customer
+  CUSTOMER_CREATE: "CUSTOMER_CREATE",
+  CUSTOMER_READ: "CUSTOMER_READ",
+  CUSTOMER_UPDATE: "CUSTOMER_UPDATE",
+  CUSTOMER_DEACTIVATE: "CUSTOMER_DEACTIVATE",
+  CUSTOMER_HISTORY_READ: "CUSTOMER_HISTORY_READ",
+
+  // 08 Supplier / Purchasing
+  SUPPLIER_CREATE: "SUPPLIER_CREATE",
+  SUPPLIER_READ: "SUPPLIER_READ",
+  SUPPLIER_UPDATE: "SUPPLIER_UPDATE",
+  SUPPLIER_DEACTIVATE: "SUPPLIER_DEACTIVATE",
+  PURCHASE_CREATE: "PURCHASE_CREATE",
+  PURCHASE_READ: "PURCHASE_READ",
+  PURCHASE_BACKDATE: "PURCHASE_BACKDATE",
+  PURCHASE_CANCEL: "PURCHASE_CANCEL",
+  /** Confirms the delivery of a purchase: the accepted goods go into stock. */
+  RECEIPT_CONFIRM: "RECEIPT_CONFIRM",
+
+  // 09 Inventory
+  STOCK_READ: "STOCK_READ",
+  STOCK_READ_ALL: "STOCK_READ_ALL",
+  STOCK_ADJUST_CREATE: "STOCK_ADJUST_CREATE",
+  STOCK_ADJUST_READ: "STOCK_ADJUST_READ",
+  STOCK_ADJUST_APPROVE: "STOCK_ADJUST_APPROVE",
+  STOCK_OVERSELL_OVERRIDE: "STOCK_OVERSELL_OVERRIDE",
+  STOCK_THRESHOLD_READ: "STOCK_THRESHOLD_READ",
+  STOCK_THRESHOLD_UPDATE: "STOCK_THRESHOLD_UPDATE",
+
+  // 10 Transfer
+  TRANSFER_CREATE: "TRANSFER_CREATE",
+  TRANSFER_READ: "TRANSFER_READ",
+  TRANSFER_READ_ALL: "TRANSFER_READ_ALL",
+  TRANSFER_CONFIRM: "TRANSFER_CONFIRM",
+
+  // 11 Sales / Orders
+  SALE_CREATE: "SALE_CREATE",
+  SALE_READ: "SALE_READ",
+  SALE_READ_ALL: "SALE_READ_ALL",
+  SALE_REVERSE: "SALE_REVERSE",
+
+  // 12 Payment / Credit
+  PAYMENT_CREATE: "PAYMENT_CREATE",
+  PAYMENT_READ: "PAYMENT_READ",
+  BALANCE_READ: "BALANCE_READ",
+  CREDIT_APPROVE: "CREDIT_APPROVE",
+
+  // 13 Offline Sync
+  SYNC_PUSH: "SYNC_PUSH",
+  SYNC_PULL: "SYNC_PULL",
+  SYNC_STATUS_READ: "SYNC_STATUS_READ",
+  SYNC_CONFLICT_READ: "SYNC_CONFLICT_READ",
+  SYNC_CONFLICT_RESOLVE: "SYNC_CONFLICT_RESOLVE",
+
+  // 14 Audit
+  AUDIT_READ: "AUDIT_READ",
+
+  // 15 Dashboard / Reports
+  DASHBOARD_READ: "DASHBOARD_READ",
+  DASHBOARD_SUMMARY_READ: "DASHBOARD_SUMMARY_READ",
+  REPORT_SALES_READ: "REPORT_SALES_READ",
+  REPORT_STOCK_READ: "REPORT_STOCK_READ",
+  REPORT_DEBT_READ: "REPORT_DEBT_READ",
+  ALERT_READ: "ALERT_READ",
+} as const;
+
+export type PermissionCode = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
+
+/** Built-in roles that code may refer to (backend RoleCatalog). They cannot be renamed or deleted. */
+export const SYSTEM_ROLES = {
+  OWNER: "OWNER",
+  ADMIN: "ADMIN",
+} as const;
+
+/* -------------------------------------------------------------------------- */
+/*  Modules (used to group the permission checklist)                          */
+/* -------------------------------------------------------------------------- */
+
+export interface PermissionModule {
+  id: string;
+  label: string;
+  /** In display order. */
+  codes: readonly PermissionCode[];
+}
+
+const P = PERMISSIONS;
+
+/** Same sections as PermissionCatalog. The backend sends no module field, so grouping is defined here. */
+export const PERMISSION_MODULES: readonly PermissionModule[] = [
+  {
+    id: "iam",
+    label: "Identity & access",
+    codes: [
+      P.PERMISSION_CREATE, P.PERMISSION_READ, P.PERMISSION_UPDATE, P.PERMISSION_DELETE,
+      P.ROLE_CREATE, P.ROLE_READ, P.ROLE_UPDATE, P.ROLE_DELETE,
+      P.ROLE_PERMISSION_READ, P.ROLE_PERMISSION_UPDATE,
+      P.USER_CREATE, P.USER_READ, P.USER_UPDATE, P.USER_DELETE,
+      P.USER_ACTIVATE, P.USER_DEACTIVATE, P.USER_ASSIGN_ROLE, P.USER_PASSWORD_RESET,
+    ],
+  },
+  {
+    id: "location",
+    label: "Locations",
+    codes: [
+      P.LOCATION_CREATE, P.LOCATION_READ, P.LOCATION_UPDATE, P.LOCATION_ACTIVATE,
+      P.LOCATION_DEACTIVATE, P.LOCATION_USER_READ, P.LOCATION_USER_ASSIGN, P.LOCATION_USER_REMOVE,
+    ],
+  },
+  {
+    id: "category",
+    label: "Categories",
+    codes: [P.CATEGORY_CREATE, P.CATEGORY_READ, P.CATEGORY_UPDATE, P.CATEGORY_ACTIVATE, P.CATEGORY_DEACTIVATE],
+  },
+  {
+    id: "product",
+    label: "Products",
+    codes: [P.PRODUCT_CREATE, P.PRODUCT_READ, P.PRODUCT_UPDATE, P.PRODUCT_ACTIVATE, P.PRODUCT_DEACTIVATE],
+  },
+  {
+    id: "unit",
+    label: "Units & conversion",
+    codes: [P.UNIT_CREATE, P.UNIT_READ, P.UNIT_UPDATE, P.UNIT_DEACTIVATE],
+  },
+  {
+    id: "pricing",
+    label: "Pricing",
+    codes: [P.PRICE_RULE_CREATE, P.PRICE_RULE_READ, P.PRICE_RULE_UPDATE, P.PRICE_RULE_DEACTIVATE],
+  },
+  {
+    id: "customer",
+    label: "Customers",
+    codes: [
+      P.CUSTOMER_CREATE, P.CUSTOMER_READ, P.CUSTOMER_UPDATE,
+      P.CUSTOMER_DEACTIVATE, P.CUSTOMER_HISTORY_READ,
+    ],
+  },
+  {
+    id: "supplier",
+    label: "Suppliers & purchasing",
+    codes: [
+      P.SUPPLIER_CREATE, P.SUPPLIER_READ, P.SUPPLIER_UPDATE, P.SUPPLIER_DEACTIVATE,
+      P.PURCHASE_CREATE, P.PURCHASE_READ, P.PURCHASE_CANCEL, P.RECEIPT_CONFIRM, P.PURCHASE_BACKDATE,
+    ],
+  },
+  {
+    id: "inventory",
+    label: "Inventory",
+    codes: [
+      P.STOCK_READ, P.STOCK_READ_ALL, P.STOCK_ADJUST_CREATE, P.STOCK_ADJUST_READ,
+      P.STOCK_ADJUST_APPROVE, P.STOCK_OVERSELL_OVERRIDE, P.STOCK_THRESHOLD_READ, P.STOCK_THRESHOLD_UPDATE,
+    ],
+  },
+  {
+    id: "transfer",
+    label: "Transfers",
+    codes: [P.TRANSFER_CREATE, P.TRANSFER_READ, P.TRANSFER_READ_ALL, P.TRANSFER_CONFIRM],
+  },
+  {
+    id: "sales",
+    label: "Sales & orders",
+    codes: [P.SALE_CREATE, P.SALE_READ, P.SALE_READ_ALL, P.SALE_REVERSE],
+  },
+  {
+    id: "payment",
+    label: "Payments & credit",
+    codes: [P.PAYMENT_CREATE, P.PAYMENT_READ, P.BALANCE_READ, P.CREDIT_APPROVE],
+  },
+  {
+    id: "sync",
+    label: "Offline sync",
+    codes: [P.SYNC_PUSH, P.SYNC_PULL, P.SYNC_STATUS_READ, P.SYNC_CONFLICT_READ, P.SYNC_CONFLICT_RESOLVE],
+  },
+  {
+    id: "audit",
+    label: "Audit",
+    codes: [P.AUDIT_READ],
+  },
+  {
+    id: "reports",
+    label: "Dashboard & reports",
+    codes: [
+      P.DASHBOARD_READ, P.DASHBOARD_SUMMARY_READ, P.REPORT_SALES_READ,
+      P.REPORT_STOCK_READ, P.REPORT_DEBT_READ, P.ALERT_READ,
+    ],
+  },
+];
