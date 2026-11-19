@@ -27,6 +27,15 @@ COPY . .
 # Disable telemetry during build
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Values that Next.js bakes in at build time (rewrites + NEXT_PUBLIC_*).
+# Render passes the service environment variables to the build as build args.
+ARG API_PROXY_TARGET
+ARG NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
+ARG NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET
+ENV API_PROXY_TARGET=$API_PROXY_TARGET
+ENV NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=$NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
+ENV NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=$NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET
+
 # Build the Next.js application
 RUN \
   if [ -f package-lock.json ]; then npm run build; \
